@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Tile from "./Tile";
 import { io } from "socket.io-client";
 
@@ -20,6 +20,16 @@ export function Tiles() {
   );
   const [colorOfTiles, setColorOfTiles] = useState([...nrOfTiles]);
   const [player, setPlayer] = useState(1);
+
+  useEffect(() => {
+    socket.on("player", (player) => {
+      player == red ? setPlayer(yellow) : setPlayer(red);
+    });
+    socket.on("colorTiles", (colorOfTiles) => {
+      setColorOfTiles([...colorOfTiles]);
+    });
+    handleClick;
+  }, [player, colorOfTiles]);
 
   const checkVerticalColors = () => {
     colorOfTiles
@@ -151,7 +161,11 @@ export function Tiles() {
     setCurrentCollumns([...currentCollumns]);
 
     checkWinner();
+
+    socket.emit("player", player);
+    socket.emit("colorTiles", colorOfTiles);
   }
+
   return (
     <>
       {nrOfTiles.map((row, rowIndex) =>

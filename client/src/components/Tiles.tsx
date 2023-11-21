@@ -29,6 +29,7 @@ export function Tiles() {
       setColorOfTiles([...colorOfTiles]);
     });
     handleClick;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player, colorOfTiles]);
 
   const checkVerticalColors = () => {
@@ -162,8 +163,8 @@ export function Tiles() {
 
     checkWinner();
 
-    socket.emit("player", player);
-    socket.emit("colorTiles", colorOfTiles);
+    socket.emit("player", player, room);
+    socket.emit("colorTiles", colorOfTiles, room);
   }
 
   return (

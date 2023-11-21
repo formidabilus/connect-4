@@ -13,14 +13,25 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  socket.on("player", (player) => {
-    console.log("connected player: ", player);
-    socket.broadcast.emit("player", player);
+  socket.on("player", (player, room) => {
+    if (!room) {
+      console.log("No room selected!");
+    } else {
+      console.log("connected player: ", player);
+      socket.to(room).emit("player", player);
+    }
   });
-  socket.on("colorTiles", (colorTiles) => {
-    console.log("colorTiles: ", colorTiles);
-    socket.broadcast.emit("colorTiles", colorTiles);
+  socket.on("colorTiles", (colorTiles, room) => {
+    if (!room) {
+      console.log("No room selected!");
+    } else {
+      console.log("colorTiles: ", colorTiles);
+      socket.broadcast.emit("colorTiles", colorTiles);
+    }
   });
+  // socket.on('join-room', room) => {
+  //   socket.join(room)
+  // }
 });
 
 const port = 3001;

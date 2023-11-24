@@ -1,30 +1,39 @@
-"use client";
-
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import Modal from "@/components/Modal";
+import { atom, PrimitiveAtom } from "jotai";
+import { getRoom } from "@/util/helperFunctions";
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:3001");
+// let roomIdAtom: any;
 
-export default function Home() {
-  const [roomId, setRoomId] = useState("");
+// // console.log(socketId);
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      setRoomId(socket.id);
-    });
-  }, [roomId]);
+// socket.on("connect", () => {
+//   var socketId = socket.id;
+//   roomIdAtom = atom(socketId!);
+// });
+
+// console.log(socketId);
+
+export default async function Home() {
+  // console.log("socletID: ", socket.id);
+  // console.log("roomIdAtom: ", roomIdAtom);
+  // const queryClient = new QueryClient();
+  // await queryClient.prefetchQuery({
+  //   queryKey: ["roomId"],
+  //   queryFn: getRoom,
+  // });
 
   return (
     <main>
-      <div className="h-full grid justify-center content-center">
-        <h2>Your ID: {`${roomId}`}</h2>
-        <Link className="place-self-center" href={"./game-start"}>
-          <button className="border-2 rounded-md border-blue-600 p-3">
-            Start game!
-          </button>
-        </Link>
-      </div>
+      {/* <HydrationBoundary state={dehydrate}> */}
+      <Modal />
+      {/* </HydrationBoundary> */}
     </main>
   );
 }

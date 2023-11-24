@@ -163,8 +163,8 @@ export function Tiles() {
 
     checkWinner();
 
-    socket.emit("player", player, room);
-    socket.emit("colorTiles", colorOfTiles, room);
+    socket.emit("player", player);
+    socket.emit("colorTiles", colorOfTiles);
   }
 
   return (

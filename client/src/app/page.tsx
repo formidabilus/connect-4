@@ -1,9 +1,9 @@
-import Modal from "@/components/Modal";
+import ModalHome from "@/components/ModalHome";
 
 export default async function Home() {
   return (
     <main>
-      <Modal />
+      <ModalHome />
     </main>
   );
 }

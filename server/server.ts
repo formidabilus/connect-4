@@ -39,6 +39,10 @@ io.on("connection", (socket) => {
       console.log("room from colorOfTiles server: ", room);
     }
   });
+  socket.on("send_playerColor", (room, playerColor) => {
+    socket.to(room).emit("playerColor", playerColor);
+    console.log("playerColor: ", playerColor);
+  });
   socket.on("disconnecting", () => {
     console.log("Disconnected with socket rooms: ", socket.rooms); // the Set contains at least the socket ID
   });

@@ -1,6 +1,38 @@
 "use client";
 
-export default function Modal() {
+import Link from "next/link";
+import { ChangeEvent, useEffect, useState } from "react";
+
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:3001");
+
+export default function ModalHome() {
+  const [inputRoomId, setInputRoomId] = useState("");
+  const [storageRoomId, setStorageRoomId] = useState("");
+
+  useEffect(() => {
+    setStorageRoomId(sessionStorage?.getItem("roomId")!);
+    socket.on("connect", () => {
+      const roomId = storageRoomId ? storageRoomId : socket.id;
+      sessionStorage.setItem("roomId", roomId);
+      console.log(socket.id);
+    });
+  }, []);
+
+  function handleClickFindButton(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void {
+    const room = inputRoomId;
+    socket.emit("join-room", room);
+
+    sessionStorage.setItem("joinRoomId", room);
+  }
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>): void {
+    setInputRoomId(event.target.value);
+  }
+
   return (
     <div className="h-screen w-screen sm:h-2/3 sm:w-2/3 grid absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 content-center bg-black bg-opacity-40  shadow-black shadow-lg">
       <h1 className="text-2xl text-center pb-10">Connect 4</h1>

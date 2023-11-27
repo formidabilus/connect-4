@@ -39,6 +39,9 @@ io.on("connection", (socket) => {
       console.log("room from colorOfTiles server: ", room);
     }
   });
+  socket.on("disconnecting", () => {
+    console.log("Disconnected with socket rooms: ", socket.rooms); // the Set contains at least the socket ID
+  });
 });
 
 const port = 3001;

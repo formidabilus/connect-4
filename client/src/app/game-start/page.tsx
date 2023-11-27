@@ -5,7 +5,9 @@ export default function Page() {
   return (
     <>
       <header>
-        <h1 className="text-2xl text-center mb-12 pt-12">Connect 4</h1>
+        <h1 className="text-2xl text-center py-6 xs:pb-12 xs:pt-12">
+          Connect 4
+        </h1>
         <div className="text-xl flex justify-around">
           <h2 className="text-red-500">
             Red{" "}
@@ -19,7 +21,7 @@ export default function Page() {
         </div>
       </header>
       <Grid />
-      <Link className="grid justify-center" href={"./"}>
+      <Link className="grid justify-center pt-4" href={"./"}>
         <button className="border-2 rounded-md border-blue-600 p-3">
           Find new lobby!
         </button>

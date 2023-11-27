@@ -36,12 +36,12 @@ export default function Modal() {
   return (
     <div className="h-screen grid justify-center content-center">
       <div className="h-auto grid justify-center content-center">
-        <h2>
+        <h2 className="text-center">
           Your ID: {storageRoomId}
+          <br />
           <br />
           Play locally!
         </h2>
-
         <Link className="place-self-center" href={"./game-start"}>
           <button className="border-2 rounded-md border-blue-600 p-3">
             Start match!
@@ -58,8 +58,11 @@ export default function Modal() {
       />
       <Link className="place-self-center" href={"./game-start"}>
         <button
+          disabled={!inputRoomId}
           onClick={handleClickFindButton}
-          className="border-2 rounded-md border-blue-600 p-3"
+          className={`${
+            !inputRoomId ? "bg-gray-900 text-red-700 cursor-not-allowed" : ""
+          } border-2 rounded-md border-blue-600 p-3`}
         >
           Find lobby!
         </button>

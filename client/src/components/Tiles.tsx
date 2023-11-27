@@ -35,7 +35,7 @@ export function Tiles() {
     socket.emit("join-room", roomId);
     handleClick;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player, colorOfTiles]);
+  }, [player, colorOfTiles, roomId]);
 
   const checkVerticalColors = () => {
     colorOfTiles

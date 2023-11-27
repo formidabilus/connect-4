@@ -9,9 +9,10 @@ const socket = io("http://localhost:3001");
 
 export default function Modal() {
   const [inputRoomId, setInputRoomId] = useState("");
-  const storageRoomId = sessionStorage && sessionStorage.getItem("roomId");
+  const [storageRoomId, setStorageRoomId] = useState("");
 
   useEffect(() => {
+    setStorageRoomId(sessionStorage?.getItem("roomId")!);
     socket.on("connect", () => {
       const roomId = storageRoomId ? storageRoomId : socket.id;
       sessionStorage.setItem("roomId", roomId);
@@ -22,7 +23,6 @@ export default function Modal() {
   function handleClickFindButton(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void {
-    event.preventDefault();
     const room = inputRoomId;
     socket.emit("join-room", room);
 
@@ -34,21 +34,36 @@ export default function Modal() {
   }
 
   return (
-    <div className="h-full grid justify-center content-center">
-      <h2>Your ID: {storageRoomId}</h2>
+    <div className="h-screen grid justify-center content-center">
+      <div className="h-auto grid justify-center content-center">
+        <h2>
+          Your ID: {storageRoomId}
+          <br />
+          Play locally!
+        </h2>
 
+        <Link className="place-self-center" href={"./game-start"}>
+          <button className="border-2 rounded-md border-blue-600 p-3">
+            Start match!
+          </button>
+        </Link>
+      </div>
+      <input
+        id="lobby"
+        required
+        placeholder="Enter lobby's name..."
+        onChange={handleChange}
+        type="text"
+        className="text-black"
+      />
       <Link className="place-self-center" href={"./game-start"}>
-        <button className="border-2 rounded-md border-blue-600 p-3">
-          Start game!
+        <button
+          onClick={handleClickFindButton}
+          className="border-2 rounded-md border-blue-600 p-3"
+        >
+          Find lobby!
         </button>
       </Link>
-      <input onChange={handleChange} type="text" className="text-black" />
-      <button
-        onClick={handleClickFindButton}
-        className="border-2 rounded-md border-blue-600 p-3"
-      >
-        Find opponent
-      </button>
     </div>
   );
 }

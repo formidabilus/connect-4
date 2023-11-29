@@ -18,6 +18,7 @@ export default function ModalHome() {
       sessionStorage.setItem("roomId", roomId);
       console.log(socket.id);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleClickFindButton(

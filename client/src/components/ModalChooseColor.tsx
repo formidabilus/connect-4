@@ -1,30 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:3001");
 
 export default function ModalChooseColor() {
-  const [playerColor, setPlayerColor] = useState("");
+  const red = 1;
+  const yellow = 2;
+  const [playerColor, setPlayerColor] = useState(0);
   const [redSelected, setRedSelected] = useState(false);
   const [yellowSelected, setYellowSelected] = useState(false);
   const [startMatch, setStartMatch] = useState(false);
+  const [storageRoomId, setStorageRoomId] = useState("");
+
+  useEffect(() => {
+    setStorageRoomId(sessionStorage?.getItem("roomId")!);
+    socket.on("send_playerColor", (playerColor) => {
+      if (!playerColor) return;
+      if (playerColor === red) {
+        setPlayerColor(red);
+        setRedSelected(true);
+      } else if (playerColor === yellow) {
+        setPlayerColor(yellow);
+        setYellowSelected(true);
+      }
+      console.log(playerColor);
+      console.log(storageRoomId);
+    });
+  }, [redSelected, yellowSelected, playerColor]);
 
   function handleClickRedButton(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void {
-    setPlayerColor("red");
+    setPlayerColor(red);
     setRedSelected(!redSelected);
-    socket.emit("send_playerColor", playerColor);
+    socket.emit("send_playerColor", storageRoomId, playerColor);
   }
 
   function handleClickYellowButton(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void {
-    setPlayerColor("yellow");
+    setPlayerColor(yellow);
     setYellowSelected(!yellowSelected);
-    socket.emit("send_playerColor", playerColor);
+    socket.emit("send_playerColor", storageRoomId, playerColor);
   }
 
   function handleClickStartButton() {
@@ -45,17 +64,23 @@ export default function ModalChooseColor() {
         <h1 className="text-2xl text-center pb-10">Choose a color!</h1>
         <div className="flex justify-around">
           <button
+            // disabled={redSelected}
             onClick={handleClickRedButton}
             className={`active:animate-ping border-2 border-black shadow-black shadow-inner bg-red-500 hover:bg-red-600 font-bold w-32 h-32 p-3 rounded-full ${
-              redSelected ? "bg-gray-400 hover:bg-gray-500" : ""
+              redSelected
+                ? "!bg-gray-400 !hover:bg-gray-500 cursor-not-allowed !animate-none"
+                : ""
             } `}
           >
             RED
           </button>
           <button
+            // disabled={yellowSelected}
             onClick={handleClickYellowButton}
             className={`active:animate-ping border-2 border-black shadow-black shadow-inner bg-yellow-500 hover:bg-yellow-600 font-bold w-32 h-32 p-3 rounded-full ${
-              yellowSelected ? "bg-gray-400 hover:bg-gray-500" : ""
+              yellowSelected
+                ? "!bg-gray-400 disabled:!hover:bg-gray-500 cursor-not-allowed !animate-none"
+                : ""
             }`}
           >
             YELLOW

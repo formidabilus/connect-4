@@ -12,30 +12,34 @@ export default function ModalChooseColor() {
   const [redSelected, setRedSelected] = useState(false);
   const [yellowSelected, setYellowSelected] = useState(false);
   const [startMatch, setStartMatch] = useState(false);
-  const [storageRoomId, setStorageRoomId] = useState("");
+  const [storageJoinRoomId, setStorageJoinRoomId] = useState("");
 
   useEffect(() => {
-    setStorageRoomId(sessionStorage?.getItem("roomId")!);
-    socket.on("send_playerColor", (playerColor) => {
-      if (!playerColor) return;
-      if (playerColor === red) {
-        setPlayerColor(red);
-        setRedSelected(true);
-      } else if (playerColor === yellow) {
-        setPlayerColor(yellow);
-        setYellowSelected(true);
-      }
-      console.log(playerColor);
-      console.log(storageRoomId);
-    });
-  }, [redSelected, yellowSelected, playerColor]);
+    const sessionRoomId = sessionStorage.getItem("joinRoomId");
+    setStorageJoinRoomId(sessionRoomId as string);
+
+    socket.emit("join-room", storageJoinRoomId!);
+
+    socket.emit("send_playerColor", storageJoinRoomId, playerColor);
+
+    storageJoinRoomId &&
+      socket.on("playerColor", (playerColor) => {
+        console.log(playerColor);
+        if (playerColor === red) {
+          setRedSelected(!redSelected);
+        } else if (playerColor === yellow) {
+          setYellowSelected(!yellowSelected);
+        } else return;
+        console.log("playerColor from client: ", playerColor);
+        console.log("storageRoomId: ", storageJoinRoomId);
+      });
+  }, [playerColor, storageJoinRoomId, redSelected, yellowSelected]);
 
   function handleClickRedButton(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ): void {
+  ) {
     setPlayerColor(red);
     setRedSelected(!redSelected);
-    socket.emit("send_playerColor", storageRoomId, playerColor);
   }
 
   function handleClickYellowButton(
@@ -43,7 +47,6 @@ export default function ModalChooseColor() {
   ): void {
     setPlayerColor(yellow);
     setYellowSelected(!yellowSelected);
-    socket.emit("send_playerColor", storageRoomId, playerColor);
   }
 
   function handleClickStartButton() {

@@ -40,8 +40,14 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("send_playerColor", (room, playerColor) => {
-    socket.to(room).emit("playerColor", playerColor);
-    console.log("playerColor: ", playerColor);
+    if (!room) {
+      console.log("No room selected!");
+    } else {
+      socket.to(room).emit("playerColor", playerColor);
+
+      console.log("playerColor: ", playerColor);
+      console.log("room from playerColor server: ", room);
+    }
   });
   socket.on("disconnecting", () => {
     console.log("Disconnected with socket rooms: ", socket.rooms); // the Set contains at least the socket ID

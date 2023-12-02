@@ -1,8 +1,7 @@
 "use client";
 
-import { ReactElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { clearInterval } from "timers";
 import Counter from "./Counter";
 
 const socket = io("http://localhost:3001");
@@ -10,8 +9,6 @@ const socket = io("http://localhost:3001");
 export default function ModalChooseColor() {
   const red = 1;
   const yellow = 2;
-  const oneSecond = 1000;
-  const [countSeconds, setCountSeconds] = useState(3000);
   const [playerColor, setPlayerColor] = useState(0);
   const [redSelected, setRedSelected] = useState(false);
   const [yellowSelected, setYellowSelected] = useState(false);
@@ -23,7 +20,7 @@ export default function ModalChooseColor() {
     setStorageJoinRoomId(sessionRoomId as string);
 
     socket.emit("join-room", storageJoinRoomId!);
-
+    socket.emit("send_startMatch", storageJoinRoomId, startMatch);
     socket.emit("send_playerColor", storageJoinRoomId, playerColor);
 
     storageJoinRoomId &&
@@ -33,11 +30,12 @@ export default function ModalChooseColor() {
           setRedSelected(!redSelected);
         } else if (playerColor === yellow) {
           setYellowSelected(!yellowSelected);
-        } else return;
+        } else setPlayerColor(0);
         console.log("playerColor from client: ", playerColor);
         console.log("storageRoomId: ", storageJoinRoomId);
-      });
-  }, [storageJoinRoomId, redSelected, yellowSelected]);
+      }) &&
+      socket.on("startMatch", (startMatch) => setStartMatch(startMatch));
+  }, [storageJoinRoomId, redSelected, yellowSelected, playerColor, startMatch]);
 
   function handleClickRedButton(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -55,21 +53,11 @@ export default function ModalChooseColor() {
 
   function handleClickStartButton() {
     setStartMatch(true);
-    countDown();
-  }
-
-  function countDown() {
-    const interval = setInterval(() => {
-      setCountSeconds((countSeconds) => countSeconds - 1000);
-      if (countSeconds < 0) {
-        clearInterval(interval);
-      }
-    }, oneSecond);
   }
 
   return (
     <>
-      {startMatch && <Counter />}
+      {!!startMatch && <Counter />}
       <div
         className={`h-screen w-screen top-0 bg-red-600 absolute ${
           startMatch ? "hidden" : ""

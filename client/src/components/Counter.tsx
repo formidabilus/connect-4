@@ -7,7 +7,7 @@ const Counter = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCount(count - 1);
+      count && setCount(count - 1);
     }, oneSecond);
     return () => {
       clearInterval(interval);
@@ -15,13 +15,15 @@ const Counter = () => {
   }, [count]);
 
   return (
-    <h1
-      className={`grid  bg-black bg-opacity-90 place-content-center h-screen w-screen top-0 absolute text-9xl text-white ${
-        count < 0 ? "hidden" : null
-      }`}
-    >
-      {count}
-    </h1>
+    !!count && (
+      <h1
+        className={`grid  bg-black bg-opacity-90 place-content-center h-screen w-screen top-0 absolute text-9xl text-white ${
+          count < 0 ? "hidden" : null
+        }`}
+      >
+        {count}
+      </h1>
+    )
   );
 };
 

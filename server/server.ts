@@ -13,13 +13,13 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  socket.on("join-room", (room) => {
-    socket.join(room);
-    console.log("room from server join: ", room);
-  });
   socket.on("connect", () => {
     console.log("connected with socket id: ", socket.id);
     socket.broadcast.emit("socketID", socket.id);
+  });
+  socket.on("join-room", (room) => {
+    socket.join(room);
+    console.log("room from server join: ", room);
   });
   socket.on("send_player", (room, player) => {
     if (!room) {
@@ -47,6 +47,16 @@ io.on("connection", (socket) => {
 
       console.log("playerColor: ", playerColor);
       console.log("room from playerColor server: ", room);
+    }
+  });
+  socket.on("send_startMatch", (room, startMatch) => {
+    if (!room) {
+      console.log("No room selected!");
+    } else {
+      socket.to(room).emit("startMatch", startMatch);
+
+      console.log("startMatch: ", startMatch);
+      console.log("room from startMatch server: ", room);
     }
   });
   socket.on("disconnecting", () => {

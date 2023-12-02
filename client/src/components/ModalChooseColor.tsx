@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { io } from "socket.io-client";
 import Counter from "./Counter";
 
 const socket = io("http://localhost:3001");
 
 export default function ModalChooseColor() {
+  const router = useRouter();
+
   const red = 1;
   const yellow = 2;
   const [playerColor, setPlayerColor] = useState(0);
@@ -53,6 +56,7 @@ export default function ModalChooseColor() {
 
   function handleClickStartButton() {
     setStartMatch(true);
+    router.push("./game-start");
   }
 
   return (
@@ -93,6 +97,7 @@ export default function ModalChooseColor() {
               YELLOW
             </button>
           </div>
+
           <button
             disabled={!(redSelected && yellowSelected)}
             onClick={handleClickStartButton}

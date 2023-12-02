@@ -27,7 +27,7 @@ export default function Page() {
           Find new lobby!
         </button>
       </Link>
-      <ModalChooseColor />
+      {/* <ModalChooseColor /> */}
     </>
   );
 }

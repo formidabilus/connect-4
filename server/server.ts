@@ -41,14 +41,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("send_currentColumns", (room, currentColumns) => {
-    if (!room) {
-      console.log("No room selected!");
-    } else {
-      socket.to(room).emit("currentColumns", currentColumns);
-    }
-  });
-
   socket.on("send_colorOfTiles", (room, colorOfTiles) => {
     if (!room) {
       console.log("No room selected!");

@@ -42,18 +42,13 @@ export function Tiles() {
         : null;
     });
 
-    socket.on("currentColums", (currentCollumns) => {
-      setCurrentCollumns([...currentCollumns]);
-    });
     socket.on("colorOfTiles", (colorOfTiles) => {
       setColorOfTiles([...colorOfTiles]);
     });
 
-    socket.emit("send_currentColumns", roomId, currentCollumns);
-
     handleClick;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player, colorOfTiles, roomId, currentCollumns]);
+  }, [player, colorOfTiles, roomId]);
 
   const checkVerticalColors = () => {
     colorOfTiles
@@ -172,7 +167,10 @@ export function Tiles() {
   function handleClick(columnIndex: number) {
     let rowIndexLevel = currentCollumns[columnIndex];
 
-    if (rowIndexLevel < 0 || !!colorOfTiles[rowIndexLevel][columnIndex]) return;
+    if (rowIndexLevel < 0) return;
+    if (!!colorOfTiles[rowIndexLevel][columnIndex]) {
+      --rowIndexLevel;
+    }
     if (player === red) {
       colorOfTiles[rowIndexLevel][columnIndex] = red;
       setColorOfTiles([...colorOfTiles]);
@@ -190,8 +188,6 @@ export function Tiles() {
     socket.emit("send_colorOfTiles", roomId, colorOfTiles);
 
     checkWinner();
-
-    socket.emit("send_currentColumns", roomId, currentCollumns);
 
     console.log("roomId from Tiles: ", roomId);
   }

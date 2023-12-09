@@ -1,11 +1,13 @@
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Counter = () => {
   const [count, setCount] = useState(3);
-
+  const router = useRouter();
   const oneSecond = 1000;
 
   useEffect(() => {
+    !count ? router.push("./game-start", { scroll: false }) : null;
     const interval = setInterval(() => {
       count && setCount(count - 1);
     }, oneSecond);

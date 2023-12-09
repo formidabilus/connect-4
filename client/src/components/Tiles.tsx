@@ -22,6 +22,8 @@ export function Tiles() {
   const [player, setPlayer] = useState(1);
   const [roomId, setRoomId] = useState("");
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
     const sessionRoomId = sessionStorage.getItem("joinRoomId");
     setRoomId(sessionRoomId!);
@@ -29,22 +31,29 @@ export function Tiles() {
     socket.emit("join-room", roomId);
 
     socket.on("player", (player) => {
-      player == red ? setPlayer(yellow) : setPlayer(red);
+      player === red ? setPlayer(yellow) : setPlayer(red);
     });
+    console.log("player from tiles: ", player);
     socket.on("send_playerColor", (playerColor) => {
-      !!playerColor && playerColor == red
+      !!playerColor && playerColor === red
         ? setPlayer(yellow)
-        : playerColor == yellow
+        : playerColor === yellow
         ? setPlayer(red)
         : null;
+    });
+
+    socket.on("currentColums", (currentCollumns) => {
+      setCurrentCollumns([...currentCollumns]);
     });
     socket.on("colorOfTiles", (colorOfTiles) => {
       setColorOfTiles([...colorOfTiles]);
     });
 
+    socket.emit("send_currentColumns", roomId, currentCollumns);
+
     handleClick;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player, colorOfTiles, roomId]);
+  }, [player, colorOfTiles, roomId, currentCollumns]);
 
   const checkVerticalColors = () => {
     colorOfTiles
@@ -162,6 +171,7 @@ export function Tiles() {
 
   function handleClick(columnIndex: number) {
     let rowIndexLevel = currentCollumns[columnIndex];
+
     if (rowIndexLevel < 0 || !!colorOfTiles[rowIndexLevel][columnIndex]) return;
     if (player === red) {
       colorOfTiles[rowIndexLevel][columnIndex] = red;
@@ -172,15 +182,18 @@ export function Tiles() {
       setColorOfTiles([...colorOfTiles]);
       setPlayer(red);
     } else return;
+
     currentCollumns[columnIndex] = --rowIndexLevel;
     setCurrentCollumns([...currentCollumns]);
 
-    checkWinner();
-
-    console.log("roomId from Tiles: ", roomId);
-
     socket.emit("send_player", roomId, player);
     socket.emit("send_colorOfTiles", roomId, colorOfTiles);
+
+    checkWinner();
+
+    socket.emit("send_currentColumns", roomId, currentCollumns);
+
+    console.log("roomId from Tiles: ", roomId);
   }
 
   return (

@@ -1,15 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { io } from "socket.io-client";
 import Counter from "./Counter";
 
 const socket = io("http://localhost:3001");
 
 export default function ModalChooseColor() {
-  const router = useRouter();
-
   const red = 1;
   const yellow = 2;
   const [playerColor, setPlayerColor] = useState(0);
@@ -17,65 +14,107 @@ export default function ModalChooseColor() {
   const [yellowSelected, setYellowSelected] = useState(false);
   const [startMatch, setStartMatch] = useState(false);
   const [storageJoinRoomId, setStorageJoinRoomId] = useState("");
+  const [nrOfPlayersJoined, setNrOfPlayersJoined] = useState(1);
+
+  useEffect(() => {
+    socket.emit("send_nrOfPlayersJoined", storageJoinRoomId, nrOfPlayersJoined);
+    socket.on("nrOfPlayersJoined", (nrOfPlayersJoined) => {
+      const newPlayerJoined = nrOfPlayersJoined + 1;
+      setNrOfPlayersJoined(newPlayerJoined);
+      console.log("nrOfPlayersJoined: ", newPlayerJoined);
+    });
+
+    socket.on("disconnecting", (nrOfPlayersJoined) => {
+      const onePlayerDisconnected = nrOfPlayersJoined - 1;
+      setNrOfPlayersJoined(onePlayerDisconnected);
+      console.log("nrOfPlayersJoined: ", nrOfPlayersJoined);
+    });
+  }, []);
 
   useEffect(() => {
     const sessionRoomId = sessionStorage.getItem("joinRoomId");
     setStorageJoinRoomId(sessionRoomId as string);
-
     socket.emit("join-room", storageJoinRoomId!);
-    socket.emit("send_startMatch", storageJoinRoomId, startMatch);
-    socket.emit("send_playerColor", storageJoinRoomId, playerColor);
+    socket.emit("send_nrOfPlayersJoined", storageJoinRoomId, nrOfPlayersJoined);
+    // socket.on("nrOfPlayersJoined", (newPlayerJoined) => {
+    //   setNrOfPlayersJoined(newPlayerJoined);
+    //   console.log("nrOfPlayersJoined: ", nrOfPlayersJoined);
+    // });
 
-    storageJoinRoomId &&
-      socket.on("playerColor", (playerColor) => {
-        console.log(playerColor);
-        if (playerColor === red) {
-          setRedSelected(!redSelected);
-        } else if (playerColor === yellow) {
-          setYellowSelected(!yellowSelected);
-        } else setPlayerColor(0);
-        console.log("playerColor from client: ", playerColor);
-        console.log("storageRoomId: ", storageJoinRoomId);
-      }) &&
-      socket.on("startMatch", (startMatch) => setStartMatch(startMatch));
-  }, [storageJoinRoomId, redSelected, yellowSelected, playerColor, startMatch]);
+    // socket.on("disconnecting", (onePlayerDisconnected) => {
+    //   setNrOfPlayersJoined(onePlayerDisconnected);
+    //   console.log("nrOfPlayersJoined: ", nrOfPlayersJoined);
+    // });
+
+    // socket.emit(
+    //   "disconnecting",
+    //   (storageJoinRoomId, nrOfPlayersJoined: number) => {
+    //     console.log(storageJoinRoomId);
+    //     setNrOfPlayersJoined(nrOfPlayersJoined - 1);
+    //   }
+    // );
+
+    socket.on("playerColor", (playerColor, redSelected, yellowSelected) => {
+      if (playerColor === red) {
+        setRedSelected(redSelected);
+        setPlayerColor(red);
+      } else if (playerColor === yellow) {
+        setYellowSelected(yellowSelected);
+        setPlayerColor(yellow);
+      } else {
+        setRedSelected(false);
+        setYellowSelected(false);
+        setPlayerColor(0);
+      }
+      console.log("playerColor from client: ", playerColor);
+      console.log("storageRoomId: ", storageJoinRoomId);
+    });
+
+    socket.on("startMatch", (startMatch) => setStartMatch(startMatch));
+
+    socket.emit(
+      "send_playerColor",
+      storageJoinRoomId,
+      playerColor,
+      redSelected,
+      yellowSelected
+    );
+    socket.emit("send_startMatch", storageJoinRoomId, startMatch);
+  }, [storageJoinRoomId, redSelected, yellowSelected, startMatch]);
 
   function handleClickRedButton(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
-    setPlayerColor(red);
     setRedSelected(!redSelected);
+    setPlayerColor(red);
   }
 
   function handleClickYellowButton(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void {
-    setPlayerColor(yellow);
     setYellowSelected(!yellowSelected);
+    setPlayerColor(yellow);
   }
 
   function handleClickStartButton() {
     setStartMatch(true);
-    router.push("./game-start");
   }
 
   return (
     <>
       {!!startMatch && <Counter />}
-      <div
-        className={`h-screen w-screen top-0 bg-red-600 absolute ${
-          startMatch ? "hidden" : ""
-        }`}
-      >
+      <div className={`h-full w-full absolute ${startMatch ? "hidden" : ""}`}>
         <div
           className={`grid content-center h-screen w-screen sm:h-2/3 sm:w-2/3  absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  bg-black bg-opacity-90  shadow-black shadow-lg ${
             startMatch ? "hidden" : ""
           }`}
         >
-          <h1 className="text-2xl text-center pb-10">Choose a color!</h1>
+          <h1 className="text-2xl text-center pb-10">{`${
+            nrOfPlayersJoined < 2 ? "Waiting for opponet..." : "Choose a color!"
+          }`}</h1>
           <div className="flex justify-around">
             <button
-              // disabled={redSelected}
+              disabled={nrOfPlayersJoined < 2 ? true : false}
               onClick={handleClickRedButton}
               className={`active:animate-ping border-2 border-black shadow-black shadow-inner bg-red-500 hover:bg-red-600 font-bold w-32 h-32 p-3 rounded-full ${
                 redSelected
@@ -86,7 +125,7 @@ export default function ModalChooseColor() {
               RED
             </button>
             <button
-              // disabled={yellowSelected}
+              disabled={nrOfPlayersJoined < 2 ? true : false}
               onClick={handleClickYellowButton}
               className={`active:animate-ping border-2 border-black shadow-black shadow-inner bg-yellow-500 hover:bg-yellow-600 font-bold w-32 h-32 p-3 rounded-full ${
                 yellowSelected

@@ -22,17 +22,15 @@ export function Tiles() {
   const [player, setPlayer] = useState(1);
   const [roomId, setRoomId] = useState("");
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     const sessionRoomId = sessionStorage.getItem("joinRoomId");
     setRoomId(sessionRoomId!);
 
     socket.emit("join-room", roomId);
 
-    socket.on("player", (player) => {
-      player === red ? setPlayer(yellow) : setPlayer(red);
-    });
+    // socket.on("player", (player) => {
+    //   player === red ? setPlayer(yellow) : setPlayer(red);
+    // });
     console.log("player from tiles: ", player);
     socket.on("send_playerColor", (playerColor) => {
       !!playerColor && playerColor === red
@@ -45,6 +43,8 @@ export function Tiles() {
     socket.on("colorOfTiles", (colorOfTiles) => {
       setColorOfTiles([...colorOfTiles]);
     });
+
+    socket.emit("send_playerColor", roomId, player);
 
     handleClick;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,6 +166,8 @@ export function Tiles() {
 
   function handleClick(columnIndex: number) {
     let rowIndexLevel = currentCollumns[columnIndex];
+    if (player) {
+    }
 
     if (rowIndexLevel < 0) return;
     if (!!colorOfTiles[rowIndexLevel][columnIndex]) {

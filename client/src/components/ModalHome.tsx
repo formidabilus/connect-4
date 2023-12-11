@@ -23,6 +23,13 @@ export default function ModalHome() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleClickPlayLocally(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void {
+    const socketId = socket.id;
+    sessionStorage.setItem("joinRoomId", socketId);
+  }
+
   function handleClickEnterLobby(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void {
@@ -48,7 +55,10 @@ export default function ModalHome() {
         <h1 className="text-2xl text-center pb-10">Connect 4</h1>
         <div className="grid m-2">
           <Link className="place-self-center" href={"./game-start"}>
-            <button className=" text-white   hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-6 py-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <button
+              onClick={handleClickPlayLocally}
+              className="text-white   hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-6 py-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
               Play locally!
             </button>
           </Link>

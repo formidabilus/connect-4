@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import Counter from "./Counter";
+import { atom, useAtom } from "jotai";
 
 const socket = io("http://localhost:3001");
+export const playerFirstMoveAtom = atom(0);
 
 export default function ModalChooseColor() {
   const red = 1;
@@ -15,6 +17,7 @@ export default function ModalChooseColor() {
   const [startMatch, setStartMatch] = useState(false);
   const [storageJoinRoomId, setStorageJoinRoomId] = useState("");
   const [nrOfPlayersJoined, setNrOfPlayersJoined] = useState(1);
+  const [_, setPlayerFirstMove] = useAtom(playerFirstMoveAtom);
 
   useEffect(() => {
     socket.emit("send_nrOfPlayersJoined", storageJoinRoomId, nrOfPlayersJoined);
@@ -87,6 +90,7 @@ export default function ModalChooseColor() {
   ) {
     setRedSelected(!redSelected);
     setPlayerColor(red);
+    setPlayerFirstMove(red);
   }
 
   function handleClickYellowButton(

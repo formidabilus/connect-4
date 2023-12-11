@@ -57,12 +57,9 @@ io.on("connection", (socket) => {
       if (!room) {
         console.log("No room selected!");
       } else {
-        io.in(room).emit(
-          "playerColor",
-          playerColor,
-          redSelected,
-          yellowSelected
-        );
+        socket
+          .to(room)
+          .emit("playerColor", playerColor, redSelected, yellowSelected);
 
         console.log("playerColor: ", playerColor);
         console.log("room from playerColor socket: ", room);

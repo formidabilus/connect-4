@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import Tile from "./Tile";
 import { io } from "socket.io-client";
+import { useAtom } from "jotai";
+import { playerColorAtom, playerMoveAtom } from "./ModalChooseColor";
+import { playLocallyAtom } from "./ModalHome";
 
 const socket = io("http://localhost:3001");
 
@@ -19,8 +22,10 @@ export function Tiles() {
     Array(nrOfColumns).fill(nrOfRows - 1)
   );
   const [colorOfTiles, setColorOfTiles] = useState([...nrOfTiles]);
-  const [player, setPlayer] = useState(1);
   const [roomId, setRoomId] = useState("");
+  const [playerMove, setPlayerMove] = useAtom(playerMoveAtom);
+  const [player, setPlayer] = useAtom(playerColorAtom);
+  const [playLocally] = useAtom(playLocallyAtom);
 
   useEffect(() => {
     const sessionRoomId = sessionStorage.getItem("joinRoomId");
@@ -32,21 +37,15 @@ export function Tiles() {
     //   player === red ? setPlayer(yellow) : setPlayer(red);
     // });
     console.log("player from tiles: ", player);
-    socket.on("send_playerColor", (playerColor) => {
-      !!playerColor && playerColor === red
-        ? setPlayer(yellow)
-        : playerColor === yellow
-        ? setPlayer(red)
-        : null;
-    });
 
     socket.on("colorOfTiles", (colorOfTiles) => {
       setColorOfTiles([...colorOfTiles]);
     });
 
     socket.emit("send_playerColor", roomId, player);
+    console.log("playerMove: ", playerMove);
 
-    handleClick;
+    // handleClick;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player, colorOfTiles, roomId]);
 
@@ -150,10 +149,10 @@ export function Tiles() {
 
   function displayWinner(winner: number) {
     if (winner === red) {
-      console.log("Red wins!");
+      alert("Red wins!");
     } else if (winner === yellow) {
-      console.log("Yellow wins!");
-    } else console.log("It's a draw!");
+      alert("Yellow wins!");
+    } else alert("It's a draw!");
   }
 
   const checkWinner = () => {
@@ -166,22 +165,23 @@ export function Tiles() {
 
   function handleClick(columnIndex: number) {
     let rowIndexLevel = currentCollumns[columnIndex];
-    if (player) {
-    }
-
-    if (rowIndexLevel < 0) return;
     if (!!colorOfTiles[rowIndexLevel][columnIndex]) {
       --rowIndexLevel;
     }
-    if (player === red) {
-      colorOfTiles[rowIndexLevel][columnIndex] = red;
-      setColorOfTiles([...colorOfTiles]);
-      setPlayer(yellow);
-    } else if (player === yellow) {
-      colorOfTiles[rowIndexLevel][columnIndex] = yellow;
-      setColorOfTiles([...colorOfTiles]);
-      setPlayer(red);
-    } else return;
+    if (rowIndexLevel < 0) return;
+
+    if (playerMove) {
+      !playLocally ? !playerMove : playerMove;
+      if (player === red) {
+        colorOfTiles[rowIndexLevel][columnIndex] = red;
+        setColorOfTiles([...colorOfTiles]);
+        // setPlayer(yellow);
+      } else if (player === yellow) {
+        colorOfTiles[rowIndexLevel][columnIndex] = yellow;
+        setColorOfTiles([...colorOfTiles]);
+        // setPlayer(red);
+      } else return;
+    }
 
     currentCollumns[columnIndex] = --rowIndexLevel;
     setCurrentCollumns([...currentCollumns]);

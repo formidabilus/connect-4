@@ -5,13 +5,16 @@ import { ChangeEvent, useEffect, useState } from "react";
 
 import { io } from "socket.io-client";
 import ModalChooseColor from "./ModalChooseColor";
+import { atom, useAtom } from "jotai";
 
 const socket = io("http://localhost:3001");
+export const playLocallyAtom = atom(false);
 
 export default function ModalHome() {
   const [inputRoomId, setInputRoomId] = useState("");
   const [storageRoomId, setStorageRoomId] = useState("");
   const [showChooseModal, setShowChooseModal] = useState(false);
+  const [_, setPlayLocally] = useAtom(playLocallyAtom);
 
   useEffect(() => {
     setStorageRoomId(sessionStorage?.getItem("roomId")!);
@@ -28,6 +31,7 @@ export default function ModalHome() {
   ): void {
     const socketId = socket.id;
     sessionStorage.setItem("joinRoomId", socketId);
+    setPlayLocally(true);
   }
 
   function handleClickEnterLobby(
@@ -35,6 +39,7 @@ export default function ModalHome() {
   ): void {
     setShowChooseModal(true);
     const room = inputRoomId;
+    setPlayLocally(false);
     // socket.emit("join-room", room);
 
     sessionStorage.setItem("joinRoomId", room);

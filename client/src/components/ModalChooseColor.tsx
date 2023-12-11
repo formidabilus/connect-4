@@ -6,18 +6,19 @@ import Counter from "./Counter";
 import { atom, useAtom } from "jotai";
 
 const socket = io("http://localhost:3001");
-export const playerFirstMoveAtom = atom(0);
+export const playerMoveAtom = atom(0);
+export const playerColorAtom = atom(0);
 
 export default function ModalChooseColor() {
   const red = 1;
   const yellow = 2;
-  const [playerColor, setPlayerColor] = useState(0);
   const [redSelected, setRedSelected] = useState(false);
   const [yellowSelected, setYellowSelected] = useState(false);
   const [startMatch, setStartMatch] = useState(false);
   const [storageJoinRoomId, setStorageJoinRoomId] = useState("");
   const [nrOfPlayersJoined, setNrOfPlayersJoined] = useState(1);
-  const [_, setPlayerFirstMove] = useAtom(playerFirstMoveAtom);
+  const [_, setPlayerMove] = useAtom(playerMoveAtom);
+  const [playerColor, setPlayerColor] = useAtom(playerColorAtom);
 
   useEffect(() => {
     socket.emit("send_nrOfPlayersJoined", storageJoinRoomId, nrOfPlayersJoined);
@@ -51,7 +52,7 @@ export default function ModalChooseColor() {
 
     // socket.emit(
     //   "disconnecting",
-    //   (storageJoinRoomId, nrOfPlayersJoined: number) => {
+    //   (storageJoinRoomId: string, nrOfPlayersJoined: number) => {
     //     console.log(storageJoinRoomId);
     //     setNrOfPlayersJoined(nrOfPlayersJoined - 1);
     //   }
@@ -60,15 +61,12 @@ export default function ModalChooseColor() {
     socket.on("playerColor", (playerColor, redSelected, yellowSelected) => {
       if (playerColor === red) {
         setRedSelected(redSelected);
-        setPlayerColor(red);
+        // setPlayerColor(red);
       } else if (playerColor === yellow) {
         setYellowSelected(yellowSelected);
-        setPlayerColor(yellow);
-      } else {
-        setRedSelected(false);
-        setYellowSelected(false);
-        setPlayerColor(0);
-      }
+        // setPlayerColor(yellow);
+      } else return;
+
       console.log("playerColor from client: ", playerColor);
       console.log("storageRoomId: ", storageJoinRoomId);
     });
@@ -83,14 +81,14 @@ export default function ModalChooseColor() {
       yellowSelected
     );
     socket.emit("send_startMatch", storageJoinRoomId, startMatch);
-  }, [storageJoinRoomId, redSelected, yellowSelected, startMatch]);
+  }, [storageJoinRoomId, playerColor, redSelected, yellowSelected, startMatch]);
 
   function handleClickRedButton(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     setRedSelected(!redSelected);
     setPlayerColor(red);
-    setPlayerFirstMove(red);
+    setPlayerMove(red);
   }
 
   function handleClickYellowButton(

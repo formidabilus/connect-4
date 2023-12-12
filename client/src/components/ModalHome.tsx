@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { io } from "socket.io-client";
-import ModalChooseColor, { playerMoveAtom } from "./ModalChooseColor";
+import ModalChooseColor, { playerTurnAtom } from "./ModalChooseColor";
 import { atom, useAtom } from "jotai";
 
 const socket = io("http://localhost:3001");
@@ -15,7 +15,7 @@ export default function ModalHome() {
   const [storageRoomId, setStorageRoomId] = useState("");
   const [showChooseModal, setShowChooseModal] = useState(false);
   const [playLocally, setPlayLocally] = useAtom(playLocallyAtom);
-  const [playerMove, setPlayerMove] = useAtom(playerMoveAtom);
+  const [playerTurn, setPlayerTurn] = useAtom(playerTurnAtom);
 
   useEffect(() => {
     setStorageRoomId(sessionStorage?.getItem("roomId")!);
@@ -33,7 +33,7 @@ export default function ModalHome() {
     const socketId = socket.id;
     sessionStorage.setItem("joinRoomId", socketId);
     setPlayLocally(true);
-    setPlayerMove(true);
+    setPlayerTurn(true);
   }
 
   function handleClickEnterLobby(

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Tile from "./Tile";
 import { io } from "socket.io-client";
 import { useAtom } from "jotai";
-import { playerColorAtom, playerMoveAtom } from "./ModalChooseColor";
+import { playerColorAtom, playerTurnAtom } from "./ModalChooseColor";
 import { playLocallyAtom } from "./ModalHome";
 
 const socket = io("http://localhost:3001");
@@ -23,7 +23,7 @@ export function Tiles() {
   );
   const [colorOfTiles, setColorOfTiles] = useState([...nrOfTiles]);
   const [roomId, setRoomId] = useState("");
-  const [playerMove, setPlayerMove] = useAtom(playerMoveAtom);
+  const [playerTurn, setPlayerTurn] = useAtom(playerTurnAtom);
   const [player, setPlayer] = useAtom(playerColorAtom);
   const [playLocally] = useAtom(playLocallyAtom);
 
@@ -42,11 +42,11 @@ export function Tiles() {
     socket.on("colorOfTiles", (colorOfTiles) => {
       setColorOfTiles([...colorOfTiles]);
     });
-    socket.on("playerMove", (playerMove) => setPlayerMove(playerMove));
+    socket.on("playerTurn", (playerTurn) => setPlayerTurn(playerTurn));
 
-    // socket.emit("send_playerMove", roomId, playerMove);
+    // socket.emit("send_playerTurn", roomId, playerTurn);
     socket.emit("send_playerColor", roomId, player);
-    console.log("playerMove: ", playerMove);
+    console.log("playerTurn: ", playerTurn);
 
     // handleClick;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,11 +172,11 @@ export function Tiles() {
       --rowIndexLevel;
     }
     if (rowIndexLevel < 0) return;
-    console.log("playerMove from handleClick: ", playerMove);
+    console.log("playerTurn from handleClick: ", playerTurn);
     console.log("playLocally from handleClick: ", playLocally);
 
-    if (playerMove) {
-      playLocally ? playerMove : setPlayerMove(!playerMove);
+    if (playerTurn) {
+      playLocally ? playerTurn : setPlayerTurn(!playerTurn);
       if (player === red) {
         colorOfTiles[rowIndexLevel][columnIndex] = red;
         setColorOfTiles([...colorOfTiles]);
@@ -191,7 +191,7 @@ export function Tiles() {
     currentCollumns[columnIndex] = --rowIndexLevel;
     setCurrentCollumns([...currentCollumns]);
 
-    socket.emit("send_playerMove", roomId, playerMove);
+    socket.emit("send_playerTurn", roomId, playerTurn);
     socket.emit("send_player", roomId, player);
     socket.emit("send_colorOfTiles", roomId, colorOfTiles);
 

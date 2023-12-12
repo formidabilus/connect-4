@@ -51,6 +51,13 @@ io.on("connection", (socket) => {
       console.log("room from colorOfTiles socket: ", room);
     }
   });
+  socket.on("send_playerMove", (room, playerMove) => {
+    if (!room) {
+      console.log("No room selected!");
+    } else {
+      socket.to(room).emit("playerMove", playerMove);
+    }
+  });
   socket.on(
     "send_playerColor",
     (room, playerColor, redSelected, yellowSelected) => {

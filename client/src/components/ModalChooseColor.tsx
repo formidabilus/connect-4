@@ -6,7 +6,7 @@ import Counter from "./Counter";
 import { atom, useAtom } from "jotai";
 
 const socket = io("http://localhost:3001");
-export const playerMoveAtom = atom(0);
+export const playerMoveAtom = atom(false);
 export const playerColorAtom = atom(0);
 
 export default function ModalChooseColor() {
@@ -88,7 +88,7 @@ export default function ModalChooseColor() {
   ) {
     setRedSelected(!redSelected);
     setPlayerColor(red);
-    setPlayerMove(red);
+    setPlayerMove(true);
   }
 
   function handleClickYellowButton(

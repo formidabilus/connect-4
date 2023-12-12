@@ -32,7 +32,8 @@ export function Tiles() {
     setRoomId(sessionRoomId!);
 
     socket.emit("join-room", roomId);
-
+    console.log("playLocally from UE: ", playLocally);
+    playLocally && !player ? setPlayer(red) : player;
     // socket.on("player", (player) => {
     //   player === red ? setPlayer(yellow) : setPlayer(red);
     // });
@@ -41,7 +42,9 @@ export function Tiles() {
     socket.on("colorOfTiles", (colorOfTiles) => {
       setColorOfTiles([...colorOfTiles]);
     });
+    socket.on("playerMove", (playerMove) => setPlayerMove(playerMove));
 
+    socket.emit("send_playerMove", roomId, playerMove);
     socket.emit("send_playerColor", roomId, player);
     console.log("playerMove: ", playerMove);
 
@@ -169,23 +172,26 @@ export function Tiles() {
       --rowIndexLevel;
     }
     if (rowIndexLevel < 0) return;
+    console.log("playerMove from handleClick: ", playerMove);
+    console.log("playLocally from handleClick: ", playLocally);
 
     if (playerMove) {
-      !playLocally ? !playerMove : playerMove;
+      playLocally ? playerMove : setPlayerMove(!playerMove);
       if (player === red) {
         colorOfTiles[rowIndexLevel][columnIndex] = red;
         setColorOfTiles([...colorOfTiles]);
-        // setPlayer(yellow);
+        !!playLocally && setPlayer(yellow);
       } else if (player === yellow) {
         colorOfTiles[rowIndexLevel][columnIndex] = yellow;
         setColorOfTiles([...colorOfTiles]);
-        // setPlayer(red);
+        !!playLocally && setPlayer(red);
       } else return;
-    }
+    } else return;
 
     currentCollumns[columnIndex] = --rowIndexLevel;
     setCurrentCollumns([...currentCollumns]);
 
+    socket.emit("send_playerMove", roomId, playerMove);
     socket.emit("send_player", roomId, player);
     socket.emit("send_colorOfTiles", roomId, colorOfTiles);
 

@@ -44,7 +44,7 @@ export function Tiles() {
     });
     socket.on("playerMove", (playerMove) => setPlayerMove(playerMove));
 
-    socket.emit("send_playerMove", roomId, playerMove);
+    // socket.emit("send_playerMove", roomId, playerMove);
     socket.emit("send_playerColor", roomId, player);
     console.log("playerMove: ", playerMove);
 

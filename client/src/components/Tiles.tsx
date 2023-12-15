@@ -176,12 +176,14 @@ export function Tiles() {
     console.log("playerTurn from handleClick: ", playerTurn);
     console.log("playLocally from handleClick: ", playLocally);
 
-    // playerTurn ? setNotYourTurn(false) : setNotYourTurn(true);
-    // console.log("notYourTurn: ", notYourTurn);
+    playerTurn ? setNotYourTurn(false) : setNotYourTurn(true);
+    setTimeout(() => {
+      setNotYourTurn(false);
+    }, 500);
+    console.log("notYourTurn: ", notYourTurn);
 
     if (playerTurn) {
       playLocally ? playerTurn : setPlayerTurn(!playerTurn);
-      setNotYourTurn(false);
       if (player === red) {
         colorOfTiles[rowIndexLevel][columnIndex] = red;
         setColorOfTiles([...colorOfTiles]);
@@ -200,11 +202,6 @@ export function Tiles() {
     socket.emit("send_player", roomId, player);
     socket.emit("send_colorOfTiles", roomId, colorOfTiles);
 
-    !playerTurn && setNotYourTurn(true);
-    !playerTurn &&
-      setTimeout(() => {
-        setNotYourTurn(false);
-      }, 500);
     checkWinner();
 
     console.log("roomId from Tiles: ", roomId);
@@ -216,10 +213,10 @@ export function Tiles() {
         <div className="absolute grid place-items-center h-full w-full text-center">
           <span
             className={`${
-              player === red ? "text-red-500" : "text text-yellow-500"
-            } text-3xl font-extrabold shadow-black shadow-2xl animate-[ping_1s_ease-in-out_1]`}
+              player === red ? "text-yellow-500" : "text-red-500"
+            } text-3xl font-extrabold shadow-black animate-[ping_1s_ease-in-out_1]`}
           >
-            {`${player === red ? "Red's turn!" : "Yellow's turn!"}`}
+            {`${player === red ? "Yellow's turn!" : "Red's turn!"}`}
           </span>
         </div>
       )}

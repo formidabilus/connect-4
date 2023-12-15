@@ -51,11 +51,11 @@ io.on("connection", (socket) => {
       console.log("room from colorOfTiles socket: ", room);
     }
   });
-  socket.on("send_playerMove", (room, playerMove) => {
+  socket.on("send_playerTurn", (room, playerTurn) => {
     if (!room) {
       console.log("No room selected!");
     } else {
-      socket.to(room).emit("playerMove", playerMove);
+      socket.to(room).emit("playerTurn", playerTurn);
     }
   });
   socket.on(

@@ -15,8 +15,16 @@ export default function Page() {
           Connect 4
         </h1>
         <div className="text-xl flex justify-around">
-          <h2 className="text-red-500">
-            Red{" "}
+          <h2 className={`text-red-500 `}>
+            <span
+              className={`inline-block ${
+                playerColor === 1 && playerTurn
+                  ? "animate-pulse"
+                  : "animate-none"
+              }`}
+            >
+              Red{" "}
+            </span>
             <span
               className={`w-5 h-5 border border-black  shadow-inner shadow-black rounded-full bg-red-500 inline-block align-middle ${
                 playerColor === 1 && playerTurn
@@ -26,8 +34,16 @@ export default function Page() {
             ></span>
           </h2>
 
-          <h2 className="text-yellow-500">
-            Yellow{" "}
+          <h2 className={`text-yellow-500`}>
+            <span
+              className={`inline-block ${
+                playerColor === 2 && playerTurn
+                  ? "animate-pulse"
+                  : "animate-none"
+              }`}
+            >
+              Yellow{" "}
+            </span>
             <span
               className={`w-5 h-5 border border-black  shadow-inner shadow-black rounded-full bg-yellow-500 inline-block align-middle ${
                 playerColor === 2 && playerTurn

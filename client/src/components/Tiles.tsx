@@ -14,6 +14,7 @@ export function Tiles() {
   const nrOfColumns = 7;
   const red = 1;
   const yellow = 2;
+  const draw = 0;
   const nrOfTiles = Array(nrOfRows)
     .fill(0)
     .map((row) => Array(nrOfColumns).fill(0));
@@ -145,7 +146,6 @@ export function Tiles() {
   };
   const checkNoMatchedColors = () => {
     console.log("currentCollumns: ", currentCollumns);
-    const draw = 0;
     const allTilesWhereUsed =
       currentCollumns.reduce((sum, rowLevel) => sum + rowLevel, 0) == -7;
     allTilesWhereUsed ? displayWinner(draw) : null;
@@ -188,7 +188,7 @@ export function Tiles() {
         colorOfTiles[rowIndexLevel][columnIndex] = red;
         setColorOfTiles([...colorOfTiles]);
         !!playLocally && setPlayer(yellow);
-      } else if (player === yellow) {
+      } else if (player === yellow && colorOfTiles) {
         colorOfTiles[rowIndexLevel][columnIndex] = yellow;
         setColorOfTiles([...colorOfTiles]);
         !!playLocally && setPlayer(red);

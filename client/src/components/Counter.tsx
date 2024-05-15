@@ -2,7 +2,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Counter = () => {
-  const [count, setCount] = useState(1);
+  const nrOfSecondsCount = 1;
+  const [count, setCount] = useState(nrOfSecondsCount);
   const router = useRouter();
   const oneSecond = 1000;
 

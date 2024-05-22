@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import Counter from "./Counter";
 import { atom, useAtom } from "jotai";
+import Modal from "./Modal";
 
 const socket = io("http://localhost:3001");
 export const playerTurnAtom = atom(false);
@@ -106,11 +107,12 @@ export default function ModalChooseColor() {
     <>
       {!!startMatch && <Counter />}
       <div className={`h-full w-full absolute ${startMatch ? "hidden" : ""}`}>
-        <div
+        {/* <div
           className={`grid content-center h-screen w-screen sm:h-2/3 sm:w-2/3  absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  bg-black bg-opacity-90  shadow-black shadow-lg ${
             startMatch ? "hidden" : ""
           }`}
-        >
+        > */}
+        <Modal showModal={startMatch} className="bg-opacity-90">
           <h1 className="text-2xl text-center pb-10">{`${
             nrOfPlayersJoined < 2 ? "Waiting for opponet..." : "Choose a color!"
           }`}</h1>
@@ -150,7 +152,8 @@ export default function ModalChooseColor() {
           >
             Start match!
           </button>
-        </div>
+          {/* </div> */}
+        </Modal>
       </div>
     </>
   );

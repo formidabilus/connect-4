@@ -29,8 +29,7 @@ export function Tiles() {
   const [player, setPlayer] = useAtom(playerColorAtom);
   const [playLocally] = useAtom(playLocallyAtom);
   const [notYourTurn, setNotYourTurn] = useState(false);
-
-  let winner = 0;
+  const [winner, setWinner] = useState(0);
 
   useEffect(() => {
     const sessionRoomId = sessionStorage.getItem("joinRoomId");
@@ -155,7 +154,7 @@ export function Tiles() {
   };
 
   function displayWinner(result: number) {
-    winner = result;
+    setWinner(result);
   }
 
   const checkWinner = () => {
@@ -208,7 +207,7 @@ export function Tiles() {
 
   return (
     <>
-      <ModalWinner winner={!winner} />
+      <ModalWinner winner={!!winner} />
       {notYourTurn && (
         <div className="absolute grid place-items-center h-full w-full text-center">
           <span

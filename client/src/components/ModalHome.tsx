@@ -6,6 +6,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import ModalChooseColor, { playerTurnAtom } from "./ModalChooseColor";
 import { atom, useAtom } from "jotai";
+import Modal from "./Modal";
 
 const socket = io("http://localhost:3001");
 export const playLocallyAtom = atom(false);
@@ -55,11 +56,12 @@ export default function ModalHome() {
   return (
     <div>
       {showChooseModal && <ModalChooseColor />}
-      <div
+      {/* <div
         className={`${
           showChooseModal ? "hidden" : ""
         } h-screen w-screen sm:h-2/3 sm:w-2/3 grid absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 content-center bg-black bg-opacity-40  shadow-black shadow-lg `}
-      >
+      > */}
+      <Modal showModal={showChooseModal}>
         <h1 className="text-2xl text-center pb-10">Connect 4</h1>
         <div className="grid m-2">
           <Link className="place-self-center" href={"./game-start"}>
@@ -93,7 +95,8 @@ export default function ModalHome() {
             Enter lobby!
           </button>
         </div>
-      </div>
+        {/* </div> */}
+      </Modal>
     </div>
   );
 }

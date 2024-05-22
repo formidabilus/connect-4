@@ -6,6 +6,7 @@ import { io } from "socket.io-client";
 import { useAtom } from "jotai";
 import { playerColorAtom, playerTurnAtom } from "./ModalChooseColor";
 import { playLocallyAtom } from "./ModalHome";
+import ModalWinner from "./ModalWinner";
 
 const socket = io("http://localhost:3001");
 
@@ -14,7 +15,7 @@ export function Tiles() {
   const nrOfColumns = 7;
   const red = 1;
   const yellow = 2;
-  const draw = 0;
+  const draw = 3;
   const nrOfTiles = Array(nrOfRows)
     .fill(0)
     .map((row) => Array(nrOfColumns).fill(0));
@@ -28,6 +29,8 @@ export function Tiles() {
   const [player, setPlayer] = useAtom(playerColorAtom);
   const [playLocally] = useAtom(playLocallyAtom);
   const [notYourTurn, setNotYourTurn] = useState(false);
+
+  let winner = 0;
 
   useEffect(() => {
     const sessionRoomId = sessionStorage.getItem("joinRoomId");
@@ -151,12 +154,8 @@ export function Tiles() {
     allTilesWhereUsed ? displayWinner(draw) : null;
   };
 
-  function displayWinner(winner: number) {
-    if (winner === red) {
-      alert("Red wins!");
-    } else if (winner === yellow) {
-      alert("Yellow wins!");
-    } else alert("It's a draw!");
+  function displayWinner(result: number) {
+    winner = result;
   }
 
   const checkWinner = () => {
@@ -169,10 +168,10 @@ export function Tiles() {
 
   function handleClick(columnIndex: number) {
     let rowIndexLevel = currentCollumns[columnIndex];
+    if (rowIndexLevel < 0) return;
     if (!!colorOfTiles[rowIndexLevel][columnIndex]) {
       --rowIndexLevel;
     }
-    if (rowIndexLevel < 0) return;
     console.log("playerTurn from handleClick: ", playerTurn);
     console.log("playLocally from handleClick: ", playLocally);
 
@@ -209,6 +208,7 @@ export function Tiles() {
 
   return (
     <>
+      <ModalWinner winner={!winner} />
       {notYourTurn && (
         <div className="absolute grid place-items-center h-full w-full text-center">
           <span

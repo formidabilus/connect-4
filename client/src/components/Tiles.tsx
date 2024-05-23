@@ -47,6 +47,8 @@ export function Tiles() {
       setColorOfTiles([...colorOfTiles]);
     });
     socket.on("playerTurn", (playerTurn) => setPlayerTurn(playerTurn));
+    socket.on("winner", (winner) => setWinner(winner));
+    socket.emit("send_winner", roomId, winner);
 
     // socket.emit("send_playerTurn", roomId, playerTurn);
     socket.emit("send_playerColor", roomId, player);
@@ -54,7 +56,7 @@ export function Tiles() {
 
     // handleClick;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player, colorOfTiles, roomId, notYourTurn]);
+  }, [player, colorOfTiles, roomId, notYourTurn, winner]);
 
   const checkVerticalColors = () => {
     colorOfTiles
@@ -155,6 +157,7 @@ export function Tiles() {
 
   function displayWinner(result: number) {
     setWinner(result);
+    console.log("WINNER: ", winner);
   }
 
   const checkWinner = () => {
@@ -207,7 +210,7 @@ export function Tiles() {
 
   return (
     <>
-      <ModalWinner winner={!!winner} />
+      <ModalWinner winner={winner} />
       {notYourTurn && (
         <div className="absolute grid place-items-center h-full w-full text-center">
           <span

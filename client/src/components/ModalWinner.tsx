@@ -5,7 +5,7 @@ export default function ModalWinner({ winner }: { winner: number }) {
     winner == 1 ? "Red" : winner == 2 ? "Yellow" : winner == 3 ? "Draw" : null;
   console.log("winner from winnerModal: ", winner);
   return (
-    <Modal showModal={!winner}>
+    <Modal showModal={!winner} className="bg-opacity-90">
       <h1
         className={`${
           winner == 2
@@ -13,7 +13,7 @@ export default function ModalWinner({ winner }: { winner: number }) {
             : winner == 1
             ? "text-red-500"
             : "text-gray-500"
-        } text-7xl grid justify-center`}
+        } text-7xl text-center`}
       >
         {" "}
         {winner < 3 ? `${result} Won!` : `It's a Draw!`}{" "}

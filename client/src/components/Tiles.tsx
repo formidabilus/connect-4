@@ -170,6 +170,7 @@ export function Tiles() {
 
   function handleClick(columnIndex: number) {
     let rowIndexLevel = currentCollumns[columnIndex];
+    if (winner) return;
     if (rowIndexLevel < 0) return;
     if (!!colorOfTiles[rowIndexLevel][columnIndex]) {
       --rowIndexLevel;
